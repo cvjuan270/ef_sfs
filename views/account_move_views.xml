@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record model="ir.ui.view" id="view_move_form">
+        <field name="name">account.move.view.form.inherit.sfs_1_5</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <sheet position="before">
+                <header attrs="{'invisible': [('move_type', 'not in', ('out_invoice'))]}" >
+                    <button string="XML" type="object" name="get_partner" />
+                    <field name="sfs_ind_situ" widget="statusbar" nolabel="1" statusbar_visible="por generar xml,enviado y aceptado sunat" statusbar_colors="{'3':'green','1':'red'}" />
+                </header>
+            </sheet>
+        </field>
+        </record>
+    </data>
+</odoo>
