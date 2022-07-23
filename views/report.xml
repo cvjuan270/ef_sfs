@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <!--llamado-->
+        <report id = "report_custom"
+                string = "Factura Electronica"
+                model = "account.move"
+                report_type = "qweb-pdf"
+                template = "ef_sfs.report_custom_template"/>
+<!--
+        <template id = "report_custom_template" >
+            <t t-call = "report.html_container">
+                <t t-call = "report.external_layout">
+                    <div class="header">
+                        <p>Mi emplesa / Logo</p>
+                    </div>
+                    <div class="page">
+                        <h1>Esto es mi reporte</h1>
+                    </div>
+                    <div class="footer">
+                        <p>este es mi pie de pagina</p>
+                    </div>
+                </t>
+            </t>
+
+        </template>
+        -->
+    </data>
+</odoo>

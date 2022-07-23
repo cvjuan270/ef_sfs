@@ -1,0 +1,128 @@
+{
+   "cabecera": {
+      "tipOperacion": "0101",
+      "fecEmision": "2022-07-21",
+      "horEmision": "00:00:00",
+      "fecVencimiento": "2022-08-20",
+      "codLocalEmisor": "0000",
+      "tipDocUsuario": "6",
+      "numDocUsuario": "20601317185",
+      "rznSocialUsuario": " DV INVERSIONES GENERALES S.R.L.",
+      "tipMoneda": "PEN",
+      "sumTotTributos": "36.0",
+      "sumTotValVenta": "200.0",
+      "sumPrecioVenta": "236.0",
+      "sumDescTotal": "0.00",
+      "sumOtrosCargos": "0.00",
+      "sumTotalAnticipos": "0.00",
+      "sumImpVenta": "236.0",
+      "ublVersionId": "2.1",
+      "customizationId": "2.0",
+      "adicionalCabecera": null
+   },
+   "detalle": [
+      {
+         "codUnidadMedida": "ZZ",
+         "ctdUnidadItem": "1.0",
+         "codProducto": "126",
+         "codProductoSUNAT": "-",
+         "desItem": "CARDIOLOGIA",
+         "mtoValorUnitario": "100.0",
+         "sumTotTributosItem": "18.0",
+         "codTriIGV": "1000",
+         "mtoIgvItem": "18.0",
+         "mtoBaseIgvItem": "100.0",
+         "nomTributoIgvItem": "IGV",
+         "codTipTributoIgvItem": "VAT",
+         "tipAfeIGV": "10",
+         "porIgvItem": "18.00",
+         "codTriISC": "-",
+         "mtoIscItem": "0.00",
+         "mtoBaseIscItem": "0.00",
+         "nomTributoIscItem": "",
+         "codTipTributoIscItem": "",
+         "tipSisISC": "",
+         "porIscItem": "0",
+         "codTriOtro": "-",
+         "mtoTriOtroItem": "0.00",
+         "mtoBaseTriOtroItem": "0.00",
+         "nomTributoOtroItem": "OTROS",
+         "codTipTributoOtroItem": "OTH",
+         "porTriOtroItem": "15.00",
+         "codTriIcbper": "-",
+         "mtoTriIcbperItem": "0.00",
+         "ctdBolsasTriIcbperItem": "0.00",
+         "nomTributoIcbperItem": "ICBPER",
+         "codTipTributoIcbperItem": "OTH",
+         "mtoTriIcbperUnidad": "0.00",
+         "mtoPrecioVentaUnitario": "118",
+         "mtoValorVentaItem": "100.0",
+         "mtoValorReferencialUnitario": "-"
+      },
+      {
+         "codUnidadMedida": "ZZ",
+         "ctdUnidadItem": "1.0",
+         "codProducto": "163",
+         "codProductoSUNAT": "-",
+         "desItem": "ATENCION TOPICO",
+         "mtoValorUnitario": "100.0",
+         "sumTotTributosItem": "18.0",
+         "codTriIGV": "1000",
+         "mtoIgvItem": "18.0",
+         "mtoBaseIgvItem": "100.0",
+         "nomTributoIgvItem": "IGV",
+         "codTipTributoIgvItem": "VAT",
+         "tipAfeIGV": "10",
+         "porIgvItem": "18.00",
+         "codTriISC": "-",
+         "mtoIscItem": "0.00",
+         "mtoBaseIscItem": "0.00",
+         "nomTributoIscItem": "",
+         "codTipTributoIscItem": "",
+         "tipSisISC": "",
+         "porIscItem": "0",
+         "codTriOtro": "-",
+         "mtoTriOtroItem": "0.00",
+         "mtoBaseTriOtroItem": "0.00",
+         "nomTributoOtroItem": "OTROS",
+         "codTipTributoOtroItem": "OTH",
+         "porTriOtroItem": "15.00",
+         "codTriIcbper": "-",
+         "mtoTriIcbperItem": "0.00",
+         "ctdBolsasTriIcbperItem": "0.00",
+         "nomTributoIcbperItem": "ICBPER",
+         "codTipTributoIcbperItem": "OTH",
+         "mtoTriIcbperUnidad": "0.00",
+         "mtoPrecioVentaUnitario": "118",
+         "mtoValorVentaItem": "100.0",
+         "mtoValorReferencialUnitario": "-"
+      }
+   ],
+   "tributos": [
+      {
+         "ideTributo": "1000",
+         "nomTributo": "IGV",
+         "codTipTributo": "VAT",
+         "mtoBaseImponible": "200.0",
+         "mtoTributo": "36.0"
+      }
+   ],
+   "leyendas": [
+      {
+         "codLeyenda": "1000",
+         "desLeyenda": "DOSCIENTOS TREINTA y SEIS CON 0/100 SOLES"
+      }
+   ],
+   "datoPago": {
+      "formaPago": "Credito",
+      "mtoNetoPendientePago": "236.0",
+      "tipMonedaMtoNetoPendientePago": "PEN"
+   },
+   "detallePago": [
+      {
+         "mtoCuotaPago": "236.0",
+         "fecCuotaPago": "2022-08-20",
+         "tipMonedaCuotaPago": "PEN"
+      }
+   ]
+}

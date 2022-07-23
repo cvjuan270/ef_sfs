@@ -8,7 +8,10 @@
         <field name="arch" type="xml">
             <sheet position="before">
                 <header attrs="{'invisible': [('move_type', 'not in', ('out_invoice'))]}" >
-                    <button string="XML" type="object" name="get_partner" />
+                    <button string="Crea F.E." type="object" name="genera_doc_electronico" />
+                    <button string="Crea XML" type="object" name="gen_xml" />
+                    <button string="PDF" type="object" name="get_pdf_sfs" attrs="{'invisible': [('sfs_ind_situ', 'in', ('01', '05', '06', '10'))]}" />
+
                     <field name="sfs_ind_situ" widget="statusbar" nolabel="1" statusbar_visible="por generar xml,enviado y aceptado sunat" statusbar_colors="{'3':'green','1':'red'}" />
                 </header>
             </sheet>

@@ -26,7 +26,9 @@
     'data': [
         # 'security/ir.model.access.csv',
         #'views/views.xml',
-        'views/account_move_views.xml'
+        'views/account_move_views.xml',
+        'report/account_move_report.xml',
+        'report/account_move_report_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

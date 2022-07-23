@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="report_account_move_fe" model="ir.actions.report">
+            <field name="name">Factura Electronica</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ef_sfs.report_account_move_fe</field>
+            <field name="report_file">ef_sfs.report_account_move_fe</field>
+            <field name="binding_model_id" ref="model_account_move"></field>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

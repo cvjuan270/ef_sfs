@@ -1,0 +1,71 @@
+{
+   "validacion": "EXITO",
+   "mensaje": "",
+   "listaBandejaFacturador": [
+      {
+         "num_ruc": "20604454558",
+         "tip_docu": "01",
+         "num_docu": "F001-0001",
+         "fec_carg": "22/07/2022",
+         "fec_gene": null,
+         "fec_envi": null,
+         "des_obse": "-",
+         "nom_arch": "20604454558-01-F001-0001",
+         "ind_situ": "01",
+         "tip_arch": "JSON",
+         "firm_digital": null
+      },
+      {
+         "num_ruc": "20604454558",
+         "tip_docu": "01",
+         "num_docu": "F002-2033",
+         "fec_carg": "22/07/2022",
+         "fec_gene": null,
+         "fec_envi": null,
+         "des_obse": "-",
+         "nom_arch": "20604454558-01-F002-2033",
+         "ind_situ": "01",
+         "tip_arch": "JSON",
+         "firm_digital": null
+      },
+      {
+         "num_ruc": "20604454558",
+         "tip_docu": "03",
+         "num_docu": "B001-0002",
+         "fec_carg": "22/07/2022",
+         "fec_gene": "22/07/2022 15:02:04",
+         "fec_envi": null,
+         "des_obse": "-",
+         "nom_arch": "20604454558-03-B001-0002",
+         "ind_situ": "02",
+         "tip_arch": "JSON",
+         "firm_digital": null
+      },
+      {
+         "num_ruc": "20604454558",
+         "tip_docu": "03",
+         "num_docu": "B001-0003",
+         "fec_carg": "22/07/2022",
+         "fec_gene": "22/07/2022 15:02:51",
+         "fec_envi": null,
+         "des_obse": "-",
+         "nom_arch": "20604454558-03-B001-0003",
+         "ind_situ": "02",
+         "tip_arch": "JSON",
+         "firm_digital": null
+      },
+      {
+         "num_ruc": "20604454558",
+         "tip_docu": "03",
+         "num_docu": "B001-0004",
+         "fec_carg": "22/07/2022",
+         "fec_gene": null,
+         "fec_envi": null,
+         "des_obse": "-",
+         "nom_arch": "20604454558-03-B001-0004",
+         "ind_situ": "01",
+         "tip_arch": "JSON",
+         "firm_digital": null
+      }
+   ]
+}
