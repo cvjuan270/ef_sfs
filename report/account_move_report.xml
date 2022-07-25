@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="report_account_move_fe" model="ir.actions.report">
-            <field name="name">Factura Electronica</field>
+            <field name="name">Factura Electronica A-4</field>
             <field name="model">account.move</field>
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">ef_sfs.report_account_move_fe</field>
@@ -10,5 +10,33 @@
             <field name="binding_model_id" ref="model_account_move"></field>
             <field name="binding_type">report</field>
         </record>
+
+        <record id="report_account_move_fe_tk" model="ir.actions.report">
+            <field name="name">Factura Electronica Ticket</field>
+            <field name="model">account.move</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ef_sfs.report_account_move_tk</field>
+            <field name="report_file">ef_sfs.report_account_move_rk</field>
+            <field name="binding_model_id" ref="model_account_move"></field>
+            <field name="binding_type">report</field>
+            <field name="paperformat_id" ref="ef_sfs.paperformat_ticket"></field>
+        </record>
+e
+
+        <record id="paperformat_ticket" model="report.paperformat">
+            <field name="name">Rollo ticket de 8mm de ancho</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">160</field>
+            <field name="page_width">80</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">80</field>
+</record>
     </data>
 </odoo>
