@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <data>
+        <!--Factura Boleta A-4-->
         <template id="report_account_move_fe">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
@@ -22,6 +23,51 @@
                                         <td><span t-field="move.quantity" class="text-sm-end fs-1"></span></td>
                                         <td><span t-field="move.price_unit" class="text-sm-end"></span></td>
                                         <td><span t-field="move.price_subtotal" class="text-sm-end"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+
+        <!--Factura Boleta ticket-->
+        <template id="report_account_move_tk">
+             <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <!--Datos emisor-->
+                            <div class="card text-center ">
+                                <div class="card-body mt-0 mb-0 pt-0 pb-0">
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.name"></small></p>
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.vat"></small></p>
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.street"></small></p>
+                                    <hr class="mt-0 mb-0 pt-0 pb-0" style="color: #0056b2;" />
+                                    <h6 class="mt-0 mb-0 pt-0 pb-0">CLIENTE</h6>
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.name"></small></p>
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.vat"></small></p>
+                                    <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.street"></small></p>
+                                </div>
+                            </div>
+                            <!--<img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', 'text', 200, 200)"/>-->
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="my-0 py-0"><small>Descripciòn</small></th>
+                                        <th class="my-0 py-0 text-right"><small>Cantidad</small></th>
+                                        <th class="my-0 py-0 text-right"><small>Precio</small></th>
+                                        <th class="my-0 py-0 text-right"><small>Monto</small></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.invoice_line_ids" t-as="move" class="mt-0 mb-0 pt-0 pb-0">
+                                        <td class="my-0 py-0 initialism"><small t-field="move.product_id"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-field="move.quantity"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-field="move.price_unit"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-field="move.price_subtotal"></small></td>
                                     </tr>
                                 </tbody>
                             </table>
