@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+import base64
 import json
-from ftplib import FTP
-import io
-from odoo import models, fields, api
-from funciones.numbers_to_letterst import *
-from funciones.Requests_sfs_api import *
+from odoo import models, fields
+import requests_ftp
+import Requests_sfs_api
+import numbers_to_letterst
 
-_FTP_SERVER = '192.168.1.8'
-_FTP_USER = 'Juan'
-_FTP_PASS = '00Juan*897'
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
+    DigestValue = fields.Char('Firma')
     sfs_ind_situ = fields.Selection([('01', 'por generar xml'),
                                      ('02', 'xml generado'),
                                      ('03', 'enviado y aceptado sunat'),
@@ -51,9 +48,11 @@ class AccountMove(models.Model):
             efactura.pop('datoPago', None)
             efactura.pop('detallePago', None)
         print('>>>>>Genera .json')
-        print(json.dumps(efactura, indent=2))
         print('>>>>>Evia .json  /DATA')
-        self.send_json_ftp(json.dumps(efactura, indent=2,), _NOM_JSON)
+        print(_NOM_JSON)
+        requests_ftp.send_json_ftp(json.dumps(efactura, indent=2), _NOM_JSON)
+
+        self.create_attachment(json.dumps(efactura, indent=2), _NOM_JSON, self.id)
 
     def get_cabecera_ft(self):
         cabecera = {
@@ -165,7 +164,7 @@ class AccountMove(models.Model):
         lst = []
         monto_letras = {
             'codLeyenda': '1000',
-            'desLeyenda': numero_a_moneda_sunat(float(totalventa))
+            'desLeyenda': numbers_to_letterst.numero_a_moneda_sunat(float(totalventa))
         }
         lst.append(monto_letras)
         return lst
@@ -209,24 +208,13 @@ class AccountMove(models.Model):
             lst.append(values)
         return lst
 
-    def send_json_ftp(self, json,nombrejson):
-
-        with FTP(_FTP_SERVER) as ftp:
-            ftp.login(_FTP_USER, _FTP_PASS)
-            bio = io.BytesIO()
-            bio.write(json.encode())
-            bio.seek(0)
-            ftp.storbinary('STOR '+'DATA/'+nombrejson, bio)
-            ftp.quit()
-
     def get_pdf_sfs(self):
-
         _RUC = self.company_id.vat
         _TIP_DOC = self.l10n_latam_document_type_id.code
         _SERIE_NUM = str(self.name).replace(' ', '')
         nombrejson = _RUC + '-' + _TIP_DOC + '-' + _SERIE_NUM + '.json'
 
-        post_report_sfs(_RUC, _TIP_DOC, _SERIE_NUM)
+        Requests_sfs_api.post_report_sfs(_RUC, _TIP_DOC, _SERIE_NUM)
 
     #   API Request
     def gen_xml(self):
@@ -235,16 +223,34 @@ class AccountMove(models.Model):
         _SERIE_NUM = str(self.name).replace(' ', '')
 
         #    Actualiza bandeja antes de firmar xml
-        post_actualiza()
+        Requests_sfs_api.post_actualiza()
 
         #   Genera Xml y actualiza sfs_id_situ
         print('>>>>post Firma xml')
-        _sfs_id_situ = post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM)
-        self.sfs_ind_situ = str(_sfs_id_situ)
-        print('>>>> sfs_id_status = '+_sfs_id_situ)
+        _sfs_id_situ = Requests_sfs_api.post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM)
+        if _sfs_id_situ != None:
+            self.sfs_ind_situ = str(_sfs_id_situ)
+            print('>>>> sfs_id_status = ' + _sfs_id_situ)
+        nomxml = _RUC+'-'+_TIP_DOC+'-'+_SERIE_NUM+'.xml'
+        requests_ftp.get_xml_ftp(nomxml)
 
 
+    def change_size_page_tk(self):
+        print('Cambiar altura de papel')
+        paper_format = self.env['report.paperformat']
+        paper_format
 
+        #paper_format.page_height = 300
+
+    def create_attachment(self,jsonfile, name, id):
+        self.env['ir.attachment'].create({
+            'name': name,
+            'type': 'binary',
+            'res_id': self.id,
+            'res_model': 'account.move',
+            'datas': base64.b64encode(jsonfile.encode('utf-8')),
+            'mimetype': 'application/json',
+        })
 
 # -*- coding: utf-8 -*-
 
