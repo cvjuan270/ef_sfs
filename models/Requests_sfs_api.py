@@ -13,6 +13,7 @@ def post_actualiza():
   headers = {'Content-Type': 'application/json'}
   response = requests.request("POST", _IP_API+_ACTUALIZAR, headers=headers, data=payload)
 
+# Genera y firma xml
 def post_genera_xml(num_ruc, tip_docu, num_docu):
 
   payload = json.dumps({
@@ -25,17 +26,16 @@ def post_genera_xml(num_ruc, tip_docu, num_docu):
   response = requests.request("POST", _IP_API+_GENERA_XML, headers=headers, data=payload)
   parsed = json.loads(response.text)
   lst_ban_fac = parsed['listaBandejaFacturador']
-  disc_status = list(filter(lambda item: item['num_docu'] == num_docu and item['tip_docu'] == tip_docu, lst_ban_fac))
 
-  ind_situ = ''
-  for line in disc_status:
-    ind_situ = line['ind_situ']
+  ind_situ = None
+  if lst_ban_fac != None:
+    disc_status = list(filter(lambda item: item['num_docu'] == num_docu and item['tip_docu'] == tip_docu, lst_ban_fac))
+    for line in disc_status:
+      ind_situ = line['ind_situ']
   return ind_situ
 
+# Genera pdf en /REPO
 def post_report_sfs(num_ruc, tip_docu, num_docu):
   payload = json.dumps({"nomArch": num_ruc+'-'+tip_docu+'-'+num_docu})
   headers = {'Content-Type': 'application/json'}
   response = requests.request("POST", _IP_API + _CREA_PDF, headers=headers, data=payload)
-
-  {'invisible': ['|', '|', ('state', '!=', 'posted'), ('is_move_sent', '=', True),
-                 ('move_type', 'not in', ('out_invoice', 'out_refund'))]}

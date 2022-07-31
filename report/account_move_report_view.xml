@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <!--Factura Boleta A-4-->
-        <template id="report_account_move_fe">
+        <!--<template id="report_account_move_fe">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-call="web.external_layout">
@@ -30,34 +30,40 @@
                     </t>
                 </t>
             </t>
-        </template>
-
-
+        </template>-->
         <!--Factura Boleta ticket-->
         <template id="report_account_move_tk">
              <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.external_layout">
+                    <!--Actualiza el alto de formato segun el numero de lineas-->
+                    <t t-esc="o.change_size_page_tk()"/>
+                    <div t-call="web.external_layout">
                         <div class="page">
                             <!--Datos emisor-->
-                            <div class="card text-center ">
+                            <div class="text-center ">
                                 <div class="card-body mt-0 mb-0 pt-0 pb-0">
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.name"></small></p>
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.vat"></small></p>
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.company_id.street"></small></p>
-                                    <hr class="mt-0 mb-0 pt-0 pb-0" style="color: #0056b2;" />
+                                    <div>
+                                        <p class="mt-0 mb-0 pt-0 pb-0" t-if="o.l10n_latam_document_type_id.code == '01'"><samall>FACTURA ELECTRONICA</samall></p>
+                                        <p class="mt-0 mb-0 pt-0 pb-0" t-else=""><small>BOLETA ELECTRONICA</small></p>
+                                        <p class="mt-0 mb-0 pt-0 pb-0"><strong t-field="o.name"></strong></p>
+                                    </div>
+
+                                    <hr class="mt-0 pt-0" style="color: #000000;" />
                                     <h6 class="mt-0 mb-0 pt-0 pb-0">CLIENTE</h6>
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.name"></small></p>
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.vat"></small></p>
                                     <p class="mt-0 mb-0 pt-0 pb-0"><small t-field="o.partner_id.street"></small></p>
                                 </div>
                             </div>
-                            <!--<img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR', 'text', 200, 200)"/>-->
+
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
                                         <th class="my-0 py-0"><small>Descripciòn</small></th>
-                                        <th class="my-0 py-0 text-right"><small>Cantidad</small></th>
+                                        <th class="my-0 py-0 text-right"><small>Cant.</small></th>
                                         <th class="my-0 py-0 text-right"><small>Precio</small></th>
                                         <th class="my-0 py-0 text-right"><small>Monto</small></th>
                                     </tr>
@@ -65,14 +71,65 @@
                                 <tbody>
                                     <tr t-foreach="o.invoice_line_ids" t-as="move" class="mt-0 mb-0 pt-0 pb-0">
                                         <td class="my-0 py-0 initialism"><small t-field="move.product_id"></small></td>
-                                        <td class="my-0 py-0 text-right"><small t-field="move.quantity"></small></td>
-                                        <td class="my-0 py-0 text-right"><small t-field="move.price_unit"></small></td>
-                                        <td class="my-0 py-0 text-right"><small t-field="move.price_subtotal"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-esc="move.quantity"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-esc="round(move.price_unit, 4)"></small></td>
+                                        <td class="my-0 py-0 text-right"><small t-esc="move.price_subtotal"></small></td>
                                     </tr>
                                 </tbody>
                             </table>
+                             <hr class="mt-0 pt-0" style="color: #000000;" />
+                            <!--Sub totales-->
+                            <div class="text-right">
+
+                                <hr class="mt-0 mb-0 pt-0 pb-0" style="color: #000000; border:2px" />
+                                <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                                    <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                                        <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                        <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                                            <p class="mt-0 mb-0 pt-0 pb-0">Op. Gravada:    <small t-esc="amount_by_group['formatted_tax_group_base_amount']"/></p>
+                                            <p class="mt-0 mb-0 pt-0 pb-0">I.G.V.:    <small t-esc="amount_by_group['formatted_tax_group_amount']"/></p>
+                                        </t>
+                                    </t>
+                                    <p class="mt-0 mb-0 pt-0 pb-0">Importe Total:    <small t-esc="tax_totals['formatted_amount_total']"/></p>
+                            </div>
+
+                            <div class="text-center">
+                                <t t-set="_ruc_emi" t-value="o.company_id.vat" />
+                                <t t-set="_tip_doc" t-value="o.l10n_latam_document_type_id.code"/>
+                                <t t-set="_serie" t-value="o.name[0:4]"/>
+                                <t t-set="_numcor" t-value="o.name[5:]"/>
+
+                                <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                                    <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                                        <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                        <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                                            <t t-set="_sub_total" t-value="amount_by_group['tax_group_base_amount']"/>
+                                            <t t-set="_igv" t-value="amount_by_group['tax_group_amount']"/>
+                                        </t>
+                                    </t>
+                                    <t t-set="_total" t-value="tax_totals['amount_total']"/>
+                                <t t-set="_fecha" t-value="o.invoice_date" />
+                                <t t-set="_hash" t-value="'Falta definir el hash'"/>
+                                <t t-set="qr_string" t-value="_ruc_emi+'|'+_tip_doc+'|'+_serie+'|'+_numcor+'|'+str(_igv)+'|'+str(_total)+'|'+str(_fecha)+'|-|-|'+_hash" />
+                                 <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR',qr_string, 60, 60)"/>
+                            </div>
                         </div>
-                    </t>
+
+                        <!--PROMOCIONES-->
+                        <div class="card mt-2 shadow-sm">
+                              <div class="card-body">
+                                  <button class="btn btn-lg btn-block btn-outline-primary">OFTALMOLOGIA</button>
+                                <h1 class="card-title pricing-card-title">$49 <small class="text-muted">.90</small></h1>
+                                <ul class="list-unstyled mt-3 mb-4">
+                                  <li>Medición de vista computarizada</li>
+                                  <li>Toma de presión ocular</li>
+                                  <li>Fondo de ojo</li>
+                                  <li>Descarte de enfermedades oculares</li>
+                                </ul>
+                                  <p class="my-0 py-0"><small>Del: 01/07/2022 al 30/08/2022</small></p>
+                              </div>
+                        </div>
+                    </div>
                 </t>
             </t>
         </template>
