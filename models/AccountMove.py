@@ -2,11 +2,12 @@
 
 import base64
 import json
-from odoo import models, fields
-import requests_ftp
-import Requests_sfs_api
-import numbers_to_letterst
+from xml.dom import NoModificationAllowedErr
+from . import numbers_to_letterst
+from . import request_api_sfs
+from . import request_ftp_sfs
 
+from odoo import models, fields, api
 
 class AccountMove(models.Model):
     _inherit = 'account.move'
@@ -24,6 +25,8 @@ class AccountMove(models.Model):
                                      ('10', 'rechazado por sunat'),
                                      ('11', 'enviado y aceptado sunat'),
                                      ('12', 'enviado y aceptado sunat con obs.')], 'situacion', default='01')
+
+    
 
     def genera_doc_electronico(self):
         _RUC = self.company_id.vat
@@ -47,12 +50,49 @@ class AccountMove(models.Model):
         if _TIP_DOC =='03':
             efactura.pop('datoPago', None)
             efactura.pop('detallePago', None)
-        print('>>>>>Genera .json')
-        print('>>>>>Evia .json  /DATA')
-        print(_NOM_JSON)
-        requests_ftp.send_json_ftp(json.dumps(efactura, indent=2), _NOM_JSON)
 
-        self.create_attachment(json.dumps(efactura, indent=2), _NOM_JSON, self.id)
+        """ Envia .json en la Carpeta /DATA"""
+        request_ftp_sfs.send_json_ftp(json.dumps(efactura, indent=2), _NOM_JSON)
+
+        """Create attachment"""
+        _json_b64 = base64.b64encode(json.dumps(efactura, indent=2).encode('utf-8'))
+        self.create_attachment(_json_b64, _NOM_JSON)
+
+
+    #   API Request
+    def gen_xml(self):
+        _RUC = self.company_id.vat
+        _TIP_DOC = self.l10n_latam_document_type_id.code
+        _SERIE_NUM = str(self.name).replace(' ', '')
+
+        """Actualiza bandeja antes de firmar xml"""
+        request_api_sfs.post_actualiza()
+        print('Actualiza sfs')
+
+        """Genera Xml y actualiza sfs_id_situ"""
+        _sfs_response = request_api_sfs.post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM)
+
+        if _sfs_response['message'] != None or '':
+            self.narration = _sfs_response['message']
+
+        if _sfs_response['ind_situ'] != None:
+            self.sfs_ind_situ = str(_sfs_response['ind_situ'])
+        
+        print('>>>> sfs_id_status = ', _sfs_response)
+        
+        _xml_b64 = None
+        if self.sfs_ind_situ != '01':
+            _xml_b64 = request_ftp_sfs.get_xml_ftp(f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
+
+        if _xml_b64 != None:
+            """Create atachment"""
+            self.create_attachment(_xml_b64,f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
+
+            """get and update DigestValue"""
+            _DigestValue = request_ftp_sfs.read_xml(f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
+            if _DigestValue!=None:
+                self.DigestValue = _DigestValue
+
 
     def get_cabecera_ft(self):
         cabecera = {
@@ -184,7 +224,6 @@ class AccountMove(models.Model):
         lst.append(values)
         return lst
 
-
     def get_datopago_ft(self):
         _formaPago = 'Credito'
         if self.invoice_date == self.invoice_date_due:
@@ -214,42 +253,24 @@ class AccountMove(models.Model):
         _SERIE_NUM = str(self.name).replace(' ', '')
         nombrejson = _RUC + '-' + _TIP_DOC + '-' + _SERIE_NUM + '.json'
 
-        Requests_sfs_api.post_report_sfs(_RUC, _TIP_DOC, _SERIE_NUM)
+        request_api_sfs.post_report_sfs(_RUC, _TIP_DOC, _SERIE_NUM)   
 
-    #   API Request
-    def gen_xml(self):
-        _RUC = self.company_id.vat
-        _TIP_DOC = self.l10n_latam_document_type_id.code
-        _SERIE_NUM = str(self.name).replace(' ', '')
-
-        #    Actualiza bandeja antes de firmar xml
-        Requests_sfs_api.post_actualiza()
-
-        #   Genera Xml y actualiza sfs_id_situ
-        print('>>>>post Firma xml')
-        _sfs_id_situ = Requests_sfs_api.post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM)
-        if _sfs_id_situ != None:
-            self.sfs_ind_situ = str(_sfs_id_situ)
-            print('>>>> sfs_id_status = ' + _sfs_id_situ)
-        nomxml = _RUC+'-'+_TIP_DOC+'-'+_SERIE_NUM+'.xml'
-        requests_ftp.get_xml_ftp(nomxml)
-
-
+    @api.model
     def change_size_page_tk(self):
         print('Cambiar altura de papel')
-        paper_format = self.env['report.paperformat']
-        paper_format
-
-        #paper_format.page_height = 300
-
-    def create_attachment(self,jsonfile, name, id):
+        #paper_format = self.env['report.paperformat'].search([('name', '=', 'paperformat_ticket')])
+        #for line in paper_format:
+        #    print('>>papper format',line)
+       
+    def create_attachment(self,data_b64, name):
         self.env['ir.attachment'].create({
             'name': name,
             'type': 'binary',
             'res_id': self.id,
             'res_model': 'account.move',
-            'datas': base64.b64encode(jsonfile.encode('utf-8')),
-            'mimetype': 'application/json',
+            'datas': data_b64,
+            #'datas': base64.b64encode(file.encode('utf-8')),
+            #'mimetype': 'application/json',
         })
 
 # -*- coding: utf-8 -*-
