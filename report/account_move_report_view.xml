@@ -37,6 +37,7 @@
                 <t t-foreach="docs" t-as="o">
                     <!--Actualiza el alto de formato segun el numero de lineas-->
                     <t t-esc="o.change_size_page_tk()"/>
+                    
                     <div t-call="web.external_layout">
                         <div class="page">
                             <!--Datos emisor-->
@@ -109,7 +110,7 @@
                                     </t>
                                     <t t-set="_total" t-value="tax_totals['amount_total']"/>
                                 <t t-set="_fecha" t-value="o.invoice_date" />
-                                <t t-set="_hash" t-value="'Falta definir el hash'"/>
+                                <t t-set="_hash" t-value="o.DigestValue"/>
                                 <t t-set="qr_string" t-value="_ruc_emi+'|'+_tip_doc+'|'+_serie+'|'+_numcor+'|'+str(_igv)+'|'+str(_total)+'|'+str(_fecha)+'|-|-|'+_hash" />
                                  <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR',qr_string, 60, 60)"/>
                             </div>
