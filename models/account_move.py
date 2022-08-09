@@ -2,7 +2,7 @@
 
 import base64
 import json
-from xml.dom import NoModificationAllowedErr
+import re
 from . import numbers_to_letterst
 from . import request_api_sfs
 from . import request_ftp_sfs
@@ -24,16 +24,19 @@ class AccountMove(models.Model):
                                      ('09', 'enviado a sunat procesando'),
                                      ('10', 'rechazado por sunat'),
                                      ('11', 'enviado y aceptado sunat'),
-                                     ('12', 'enviado y aceptado sunat con obs.')], 'situacion', default='01')
+                                     ('12', 'enviado y aceptado sunat con obs.')], 'Estado D.E. SUNAT', default='01')
 
-    
+    def btn_test(self):
+        _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
+        print(_FTP_PARAM)
+
 
     def genera_doc_electronico(self):
         _RUC = self.company_id.vat
+        _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
         _TIP_DOC = self.l10n_latam_document_type_id.code
         _SERIE_NUM = str(self.name).replace(' ', '')
         _NOM_JSON = _RUC+'-'+_TIP_DOC+'-'+_SERIE_NUM+'.json'
-        print(_NOM_JSON)
 
         efactura = {
             'cabecera': self.get_cabecera_ft(),
@@ -46,31 +49,42 @@ class AccountMove(models.Model):
             'datoPago': self.get_datopago_ft(),
             'detallePago': self.get_detalle_pago(self.get_datopago_ft()['formaPago'])
         }
-        # SI ES BOLETA DE VENTA '03' BORRAMOS CAMPOOS DE PAGO
+        # SI ES BOLETA DE VENTA '03' BORRAMOS CAMPOS DE PAGO
         if _TIP_DOC =='03':
             efactura.pop('datoPago', None)
             efactura.pop('detallePago', None)
 
         """ Envia .json en la Carpeta /DATA"""
-        request_ftp_sfs.send_json_ftp(json.dumps(efactura, indent=2), _NOM_JSON)
+        request_ftp_sfs.send_json_ftp(json.dumps(efactura, indent=2), _NOM_JSON, _FTP_PARAM)
 
         """Create attachment"""
         _json_b64 = base64.b64encode(json.dumps(efactura, indent=2).encode('utf-8'))
         self.create_attachment(_json_b64, _NOM_JSON)
+        
+        print('>>json generado')
 
+        """GET API XML"""
+        if self.sfs_ind_situ in ('01','05','06','10'):
+            self.gen_xml()
+            print('>>xml generado')
+
+    def enviar_doc_electronico(self):
+
+        if self.sfs_ind_situ in ('02', '05', '06', '07', '10'):
+            self.send_xml()
 
     #   API Request
     def gen_xml(self):
+
+        _IP_API = self.company_id.l10n_pe_edi_sfs_api
+        _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
         _RUC = self.company_id.vat
         _TIP_DOC = self.l10n_latam_document_type_id.code
         _SERIE_NUM = str(self.name).replace(' ', '')
 
-        """Actualiza bandeja antes de firmar xml"""
-        request_api_sfs.post_actualiza()
-        print('Actualiza sfs')
-
+        print(_SERIE_NUM)
         """Genera Xml y actualiza sfs_id_situ"""
-        _sfs_response = request_api_sfs.post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM)
+        _sfs_response = request_api_sfs.post_genera_xml(_RUC, _TIP_DOC, _SERIE_NUM,_IP_API)
 
         if _sfs_response['message'] != None or '':
             self.narration = _sfs_response['message']
@@ -81,10 +95,8 @@ class AccountMove(models.Model):
         print('>>>> sfs_id_status = ', _sfs_response)
         
         _xml_b64 = None
-        if self.sfs_ind_situ != '01':
-            _xml_b64 = request_ftp_sfs.get_xml_ftp(f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
-
-        if _xml_b64 != None:
+        if self.sfs_ind_situ == '02':
+            _xml_b64 = request_ftp_sfs.get_xml_ftp(f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml', _FTP_PARAM)
             """Create atachment"""
             self.create_attachment(_xml_b64,f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
 
@@ -92,6 +104,24 @@ class AccountMove(models.Model):
             _DigestValue = request_ftp_sfs.read_xml(f'{_RUC}-{_TIP_DOC}-{_SERIE_NUM}.xml')
             if _DigestValue!=None:
                 self.DigestValue = _DigestValue
+
+
+    def send_xml(self):
+        _IP_API = self.company_id.l10n_pe_edi_sfs_api
+        _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
+        _RUC = self.company_id.vat
+        _TIP_DOC = self.l10n_latam_document_type_id.code
+        _SERIE_NUM = str(self.name).replace(' ', '')
+
+        _sfs_response = request_api_sfs.post_envia_xml(_RUC, _TIP_DOC, _SERIE_NUM, _IP_API)
+
+        if _sfs_response['message'] != None or '':
+            self.narration = _sfs_response['message']
+
+        if _sfs_response['ind_situ'] != None:
+            self.sfs_ind_situ = str(_sfs_response['ind_situ'])
+
+        print('>>Envio de DE a sunat =',_sfs_response)
 
 
     def get_cabecera_ft(self):
@@ -263,6 +293,9 @@ class AccountMove(models.Model):
         #    print('>>papper format',line)
        
     def create_attachment(self,data_b64, name):
+
+        #Buscar y eliminar si ya existe adjunto igual
+
         self.env['ir.attachment'].create({
             'name': name,
             'type': 'binary',
@@ -272,22 +305,3 @@ class AccountMove(models.Model):
             #'datas': base64.b64encode(file.encode('utf-8')),
             #'mimetype': 'application/json',
         })
-
-# -*- coding: utf-8 -*-
-
-# from odoo import models, fields, api
-
-
-# class ef_sfs(models.Model):
-#     _name = 'ef_sfs.ef_sfs'
-#     _description = 'ef_sfs.ef_sfs'
-
-#     name = fields.Char()
-#     value = fields.Integer()
-#     value2 = fields.Float(compute="_value_pc", store=True)
-#     description = fields.Text()
-#
-#     @api.depends('value')
-#     def _value_pc(self):
-#         for record in self:
-#             record.value2 = float(record.value) / 100"""

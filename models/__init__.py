@@ -1,3 +1,4 @@
 # -*- coding: utf-8 -*-
 
-from . import AccountMove
+from . import account_move
+from . import res_company

@@ -7,33 +7,33 @@ import os
 #_FTP_USER = 'Juan'
 #_FTP_PASS = '00Juan*897'
 
-_FTP_SERVER = '192.168.8.105'
-_FTP_USER = 'juan'
-_FTP_PASS = '1308'
+#_FTP_SERVER = '192.168.8.105'
+#_FTP_USER = 'juan'
+#_FTP_PASS = '1308'
 
 from ftplib import FTP
 from xml.etree import ElementTree
 
 
-def send_json_ftp(json, nombrejson):
-    with FTP(_FTP_SERVER) as ftp:
-        ftp.login(_FTP_USER, _FTP_PASS)
+def send_json_ftp(json, nombrejson, _FTP_PARAM):
+    
+    with FTP(str(_FTP_PARAM[0])) as ftp:
+        ftp.login(str(_FTP_PARAM[1]), str(_FTP_PARAM[2]))
         bio = io.BytesIO()
         bio.write(json.encode())
         bio.seek(0)
         ftp.storbinary('STOR ' + 'DATA/' + nombrejson, bio)
         ftp.quit()
 
-def get_xml_ftp(nombrexml):
+def get_xml_ftp(nombrexml, _FTP_PARAM):
     xml_file = f'/var/tmp/{nombrexml}'
-    print('>>Nombre xml: ',nombrexml)
 
     """if file exist => delete"""
     if os.path.exists(xml_file):
         os.remove(f'{xml_file}')
 
-    ftp = FTP(_FTP_SERVER)
-    ftp.login(_FTP_USER, _FTP_PASS)
+    ftp = FTP(str(_FTP_PARAM[0]))
+    ftp.login(str(_FTP_PARAM[1]), str(_FTP_PARAM[2]))
 
     """cd to directorio"""
     ftp.cwd('FIRMA')

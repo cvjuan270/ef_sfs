@@ -27,6 +27,7 @@
         # 'security/ir.model.access.csv',
         #'views/views.xml',
         'views/account_move_views.xml',
+        'views/res_company_view.xml',
         'report/account_move_report.xml',
         'report/account_move_report_view.xml',
     ],
