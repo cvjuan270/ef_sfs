@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Nombre de es compuesto por modelo>objeto>herencia>modulo-->
+    <record id="res_company_form_inherit_ef_sfs" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.ef_sfs</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[1]" position="after">
+                <page string="Facturación Electrónica SFS-sunat">
+                    <group>
+                        <group string="Parametros">
+                            <field name="l10n_pe_edi_sfs_api" />
+                            <field name="l10n_pe_edi_sfs_ftp_server" />
+                            <field name="l10n_pe_edi_sfs_ftp_user" />
+                            <field name="l10n_pe_edi_sfs_ftp_pass" password="True" />
+                        </group>
+                        <group>
+                            
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
+
+
+
+<!--<odoo>
+    <record id="res_company_form_inherit_l10n_pe_edi" model="ir.ui.view">
+        <field name="name">res.company.form.inherit.l10n_pe_edi</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_address_format')]" position="after">
+                <field name="l10n_pe_edi_address_type_code"
+                       placeholder="Address Type Code"
+                       attrs="{'invisible': [('country_code', '!=', 'PE')]}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>-->

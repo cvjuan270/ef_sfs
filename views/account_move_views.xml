@@ -8,14 +8,26 @@
         <field name="arch" type="xml">
             <sheet position="before">
                 <header attrs="{'invisible': [('move_type', 'not in', ('out_invoice'))]}" >
-                    <button string="Crea F.E." type="object" name="genera_doc_electronico" />
-                    <button string="Crea XML" type="object" name="gen_xml" />
-                    <button string="PDF" type="object" name="get_pdf_sfs" attrs="{'invisible': [('sfs_ind_situ', 'in', ('01', '05', '06', '10'))]}" />
-
+                    <button string="Crear D.E." type="object" name="genera_doc_electronico" attrs="{'invisible':[('sfs_ind_situ', 'not in', ('01', '05', '06', '07', '10'))]}" />
+                    <button string="Enviar a sunat" type="object" name="enviar_doc_electronico" attrs="{'invisible':[('sfs_ind_situ', 'not in', ('02', '05', '07', '10'))]}" />
+                    
+                    <!--<button string="PDF" type="object" name="get_pdf_sfs" attrs="{'invisible': [('sfs_ind_situ', 'in', ('01', '05', '06', '10'))]}" />-->
                     <field name="sfs_ind_situ" widget="statusbar" nolabel="1" statusbar_visible="por generar xml,enviado y aceptado sunat" statusbar_colors="{'3':'green','1':'red'}" />
                 </header>
             </sheet>
         </field>
+        </record>
+
+        <record id="view_out_invoice_tree_inherit" model="ir.ui.view">
+            <field name="name">account.move.tree.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_out_invoice_tree" />
+            <field name="arch" type="xml">
+                <field name="state" position="after">
+                    <field name="sfs_ind_situ" widget="badge" decoration-info="sfs_ind_situ in ('02','08','09')" decoration-warning="sfs_ind_situ =='07'" 
+                    decoration-danger="sfs_ind_situ in ('06','10','05')" decoration-success="sfs_ind_situ in ('03','04','11','12')"/>
+                </field>
+            </field>
         </record>
     </data>
 </odoo>
