@@ -112,11 +112,18 @@
                                 <t t-set="_fecha" t-value="o.invoice_date" />
                                 <t t-set="_hash" t-value="o.DigestValue"/>
                                 <t t-set="qr_string" t-value="_ruc_emi+'|'+_tip_doc+'|'+_serie+'|'+_numcor+'|'+str(_igv)+'|'+str(_total)+'|'+str(_fecha)+'|-|-|'+_hash" />
-                                 <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR',qr_string, 60, 60)"/>
+                                
+                                <hr class="mt-0 pt-0" style="color: #000000;" />
+                                
+                                <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR',qr_string, 60, 60)"/>
+                                
+                                <hr class="mt-0 pt-0" style="color: #000000;" />
                             </div>
                         </div>
 
+                        <div class="text-center">
                         <!--PROMOCIONES-->
+                        
                         <!--<div class="card mt-2 shadow-sm">
                               <div class="card-body">
                                   <button class="btn btn-lg btn-block btn-outline-primary">OFTALMOLOGIA</button>
@@ -130,6 +137,7 @@
                                   <p class="my-0 py-0"><small>Del: 01/07/2022 al 30/08/2022</small></p>
                               </div>
                         </div>-->
+                        </div>
                     </div>
                 </t>
             </t>

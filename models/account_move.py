@@ -2,7 +2,6 @@
 
 import base64
 import json
-import re
 from . import numbers_to_letterst
 from . import request_api_sfs
 from . import request_ftp_sfs
@@ -24,7 +23,30 @@ class AccountMove(models.Model):
                                      ('09', 'enviado a sunat procesando'),
                                      ('10', 'rechazado por sunat'),
                                      ('11', 'enviado y aceptado sunat'),
-                                     ('12', 'enviado y aceptado sunat con obs.')], 'Estado D.E. SUNAT', default='01')
+                                     ('12', 'enviado y aceptado sunat con obs.')], 'Estado D.E. SUNAT', default='01', copy = False)
+
+    # -------------------------------------------------------------------------
+    # SEQUENCE HACK
+    # -------------------------------------------------------------------------
+    def _get_last_sequence_domain(self, relaxed=False):
+        # OVERRIDE
+        where_string, param = super()._get_last_sequence_domain(relaxed)
+        
+        where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s"
+        param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
+        return where_string, param
+
+    def _get_starting_sequence(self):
+        # OVERRIDE
+        if self.l10n_latam_document_type_id:
+            doc_mapping = {'01': 'FFI', '03': 'BOL', '07': 'CNE', '08': 'NDI'}
+            middle_code = doc_mapping.get(self.l10n_latam_document_type_id.code, self.journal_id.code)
+            # TODO: maybe there is a better method for finding decent 2nd journal default invoice names
+            if self.journal_id.code != 'INV':
+                middle_code = middle_code[:1] + self.journal_id.code[:2]
+            return "%s %s-00000000" % (self.l10n_latam_document_type_id.doc_code_prefix, middle_code)
+
+        return super()._get_starting_sequence()
 
     def btn_test(self):
         _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass

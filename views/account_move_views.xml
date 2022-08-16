@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <sheet position="before">
-                <header attrs="{'invisible': [('move_type', 'not in', ('out_invoice'))]}" >
+                <header attrs="{'invisible': ['|',('move_type', 'not in', ('out_invoice')),('state', '!=', 'posted')]}" >
                     <button string="Crear D.E." type="object" name="genera_doc_electronico" attrs="{'invisible':[('sfs_ind_situ', 'not in', ('01', '05', '06', '07', '10'))]}" />
                     <button string="Enviar a sunat" type="object" name="enviar_doc_electronico" attrs="{'invisible':[('sfs_ind_situ', 'not in', ('02', '05', '07', '10'))]}" />
                     
@@ -31,3 +31,4 @@
         </record>
     </data>
 </odoo>
+
