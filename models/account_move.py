@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import base64
-from copy import copy
 import json
-import re
 from . import numbers_to_letterst
 from . import request_api_sfs
 from . import request_ftp_sfs
