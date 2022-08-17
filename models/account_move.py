@@ -25,20 +25,35 @@ class AccountMove(models.Model):
                                      ('11', 'enviado y aceptado sunat'),
                                      ('12', 'enviado y aceptado sunat con obs.')], 'Estado D.E. SUNAT', default='01', copy = False)
 
+    l10n_pe_edi_is_required = fields.Boolean(string="Is the Peruvian EDI needed", compute='_compute_l10n_pe_edi_is_required')
+    l10n_pe_edi_cancel_cdr_number = fields.Char(copy=False, help="Reference from webservice to consult afterwards.")
+
+    # -------------------------------------------------------------------------
+    # COMPUTE METHODS
+    # -------------------------------------------------------------------------
+
+    @api.depends('move_type', 'company_id')
+    def _compute_l10n_pe_edi_is_required(self):
+        for move in self:
+            move.l10n_pe_edi_is_required = move.country_code == 'PE' \
+                and move.is_sale_document() and move.journal_id.l10n_latam_use_documents \
+                and not move.l10n_pe_edi_cancel_cdr_number
+
+
     # -------------------------------------------------------------------------
     # SEQUENCE HACK
     # -------------------------------------------------------------------------
     def _get_last_sequence_domain(self, relaxed=False):
         # OVERRIDE
         where_string, param = super()._get_last_sequence_domain(relaxed)
-        
-        where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s"
-        param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
+        if self.l10n_pe_edi_is_required:
+            where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s"
+            param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
         return where_string, param
 
     def _get_starting_sequence(self):
         # OVERRIDE
-        if self.l10n_latam_document_type_id:
+        if self.l10n_pe_edi_is_required and self.l10n_latam_document_type_id:
             doc_mapping = {'01': 'FFI', '03': 'BOL', '07': 'CNE', '08': 'NDI'}
             middle_code = doc_mapping.get(self.l10n_latam_document_type_id.code, self.journal_id.code)
             # TODO: maybe there is a better method for finding decent 2nd journal default invoice names
@@ -47,6 +62,10 @@ class AccountMove(models.Model):
             return "%s %s-00000000" % (self.l10n_latam_document_type_id.doc_code_prefix, middle_code)
 
         return super()._get_starting_sequence()
+
+    #----------------------------------------------------------------
+    #
+    #----------------------------------------------------------------------
 
     def btn_test(self):
         _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
