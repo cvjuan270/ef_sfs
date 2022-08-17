@@ -1,0 +1,160 @@
+{
+  "cabecera": {
+    "fecEmision": "2022-08-12",
+    "horEmision": "09:22:00",
+    "tipDocGuia": "09",
+    "serNumDocGuia": "T001-599",
+    "numDocDestinatario": "20513959134",
+    "tipDocDestinatario": "6",
+    "rznSocialDestinatario": "V Y P ICE S.A.C.",
+    "motTrasladoDatosEnvio": "01",
+    "desMotivoTrasladoDatosEnvio": "VENTA",
+    "indTransbordoProgDatosEnvio": "false",
+    "psoBrutoTotalBienesDatosEnvio": "0.0",
+    "uniMedidaPesoBrutoDatosEnvio": "KGM",
+    "numBultosDatosEnvio": "",
+    "modTrasladoDatosEnvio": "02",
+    "fecInicioTrasladoDatosEnvio": "2022-08-12",
+    "numDocTransportista": "",
+    "tipDocTransportista": "",
+    "nomTransportista": "",
+    "numPlacaTransPrivado": "V0M-298",
+    "numDocIdeConductorTransPrivado": "44650206",
+    "tipDocIdeConductorTransPrivado": "1",
+    "nomConductorTransPrivado": "Robinson Deyby Tito Vizcardo",
+    "ubiLlegada": "010540",
+    "dirLlegada": "CAL. LOS ARCHIPIELAGOS MZA. C LOTE. 10C URB. LA CAPITANA",
+    "ubiPartida": "040101",
+    "dirPartida": "PJ. SANTA CATALINA 2DO. PISO NRO. 106 AREQUIPA - AREQUIPA - AREQUIPA",
+    "ublVersionId": "2.1",
+    "customizationId": "1.0"
+  },
+  "detalle": [
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "72.00",
+      "desItem": "LENTE STEELPRO SPY FLEX CLARO",
+      "codItem": "463"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "36.00",
+      "desItem": "LENTE STEELPRO SPY FLEX OSCURO",
+      "codItem": "464"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "10.00",
+      "desItem": "SOBRELENTE STEELPRO TOP GUN CLARO",
+      "codItem": "482"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "8.00",
+      "desItem": "SOBRELENTE STEELPRO TOP GUN OSCURO",
+      "codItem": "483"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "76.00",
+      "desItem": "GUANTE OPERADOR DRIVER STEELPRO",
+      "codItem": "3014"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "40.00",
+      "desItem": "FILTRO 3M 2097",
+      "codItem": "652"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "66.00",
+      "desItem": "TAPON DE OIDO SEGPRO ESTUCHE",
+      "codItem": "53"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "6.00",
+      "desItem": "GUANTES NITRILO VERDE CAJA MASTER",
+      "codItem": "5112"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "300.00",
+      "desItem": "TRAJE TYVEX TECSEG",
+      "codItem": "4037"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "20.00",
+      "desItem": "GUANTE NITRILO ASTARA 13\"",
+      "codItem": "168"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "4.00",
+      "desItem": "GUANTES CUT5 - SEGPRO",
+      "codItem": "5115"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "6.00",
+      "desItem": "CARTUCHO  6003",
+      "codItem": "801"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "6.00",
+      "desItem": "PAR PREFILTRO 3M 5N11",
+      "codItem": "606911"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "64.00",
+      "desItem": "VISOR CON F/ALUMINIO - SEGPRO",
+      "codItem": "206"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "85.00",
+      "desItem": "RESPIRADOR 3M 8511",
+      "codItem": "69"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "36.00",
+      "desItem": "LUNA P/MASCARA DE SOLDAR TRANSPARENTE",
+      "codItem": "809"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "16.00",
+      "desItem": "LUNA P/MASCARA DE SOLDAR OSCURA",
+      "codItem": "203"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "10.00",
+      "desItem": "BARBIQUEJO P/CASCO SEGURIDAD C/MENTONERA",
+      "codItem": "754"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "2.00",
+      "desItem": "CINTA DE SEÑALIZACION DELIMITADORA COLOR ROJO",
+      "codItem": "756"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "1.00",
+      "desItem": "PROTECTOR SOLAR DERMOSOL 1 LITRO",
+      "codItem": "1996"
+    },
+    {
+      "uniMedidaItem": "NIU",
+      "canItem": "56.00",
+      "desItem": "MASCARILLA KN 95",
+      "codItem": "4071"
+    }
+  ]
+}
