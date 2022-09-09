@@ -181,12 +181,12 @@ def leer_millardos(numero):
 
 def numero_a_moneda_sunat(numero):
     numero_entero = int(numero)
-    parte_decimal = int(round((abs(numero) - abs(numero_entero)) * 100))
+    parte_decimal = (int(round((abs(numero) - abs(numero_entero)) * 100)) or 0)
     moneda = MONEDA_SINGULAR if numero_entero == 1 else MONEDA_PLURAL
 
     letras = numero_a_letras(numero_entero)
     letras = letras.replace('UNO', 'UN')
-    letras = f"{letras} CON {parte_decimal}/100 {moneda}"
+    letras = f"{letras} CON {parte_decimal}/100"
     return letras
 
 

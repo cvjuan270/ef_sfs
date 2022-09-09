@@ -2,6 +2,7 @@
 
 import base64
 import json
+from textwrap import indent
 from . import numbers_to_letterst
 from . import request_api_sfs
 from . import request_ftp_sfs
@@ -90,6 +91,8 @@ class AccountMove(models.Model):
             'datoPago': self.get_datopago_ft(),
             'detallePago': self.get_detalle_pago(self.get_datopago_ft()['formaPago'])
         }
+
+        print(json.dumps(efactura, indent=2))
         # SI ES BOLETA DE VENTA '03' BORRAMOS CAMPOS DE PAGO
         if _TIP_DOC =='03':
             efactura.pop('datoPago', None)
@@ -199,8 +202,8 @@ class AccountMove(models.Model):
             "mtoDetraccion": "-",
             "codMedioPago": "-",
             "codPaisCliente": "PE",
-            "codUbigeoCliente": "-",
-            "desDireccionCliente": "-",
+            "codUbigeoCliente": (str(self.partner_id.zip) or '-'),
+            "desDireccionCliente": (str(self.partner_id.street+'-'+self.partner_id.l10n_pe_district.name+'-'+self.partner_id.l10n_pe_district.city_id.name) or '-'),
             "codPaisEntrega": "-",
             "codUbigeoEntrega": "-",
             "desDireccionEntrega": "-"
@@ -217,21 +220,31 @@ class AccountMove(models.Model):
         for line in lines:
             mtoValorUnitario = round(line.price_subtotal / line.quantity, 10)
             sumTotTributosItem = round(line.price_total - line.price_subtotal, 2)
+            codUnidadMedida = 'NIU'
+            if line.product_id.detailed_type == 'service':
+                codUnidadMedida = 'ZZ'
+            taxs = line.tax_ids
+            for tax in taxs:
+                codTriIGV = tax.l10n_pe_edi_tax_code
+                nomTributoIgvItem = tax.description
+                porIgvItem = tax.amount
+
             values = {
-                'codUnidadMedida': 'ZZ',  # DEFINIR BIEN PARA ITEMS Y SERVICIOS
+                
+                'codUnidadMedida': codUnidadMedida,
                 'ctdUnidadItem': str(line.quantity),
                 'codProducto': str(line.product_id.id),
                 'codProductoSUNAT': '-',
                 'desItem': line.product_id.name,
                 'mtoValorUnitario': str(round(mtoValorUnitario, 6)),
                 'sumTotTributosItem': str(round(sumTotTributosItem, 2)),
-                'codTriIGV': '1000',
-                'mtoIgvItem': str(round(sumTotTributosItem / line.quantity, 2)),
-                'mtoBaseIgvItem': str(round(mtoValorUnitario, 2)),
-                'nomTributoIgvItem': 'IGV',
+                'codTriIGV': codTriIGV,
+                'mtoIgvItem': str(round(sumTotTributosItem, 2)),
+                'mtoBaseIgvItem': str(round(line.price_subtotal, 2)),
+                'nomTributoIgvItem': nomTributoIgvItem,
                 'codTipTributoIgvItem': 'VAT',
                 'tipAfeIGV': '10',
-                'porIgvItem': '18.00',
+                'porIgvItem': str(porIgvItem),
                 'codTriISC': '-',
                 'mtoIscItem': '0.00',
                 'mtoBaseIscItem': '0.00',
@@ -257,6 +270,7 @@ class AccountMove(models.Model):
                 'mtoValorReferencialUnitario': '0.00',
             }
             detalle.append(values)
+            
         return detalle
   
     def get_trubutos_ft(self, _mtoBaseImponible, _mtoTributo):
@@ -275,7 +289,7 @@ class AccountMove(models.Model):
         lst = []
         monto_letras = {
             'codLeyenda': '1000',
-            'desLeyenda': numbers_to_letterst.numero_a_moneda_sunat(float(totalventa))
+            'desLeyenda': numbers_to_letterst.numero_a_moneda_sunat(float(totalventa)) +' '+ self.currency_id.currency_unit_label
         }
         lst.append(monto_letras)
         return lst
