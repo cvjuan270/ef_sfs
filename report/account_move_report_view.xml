@@ -142,5 +142,66 @@
                 </t>
             </t>
         </template>
+        <template id="report_invoice_with_payment" inherit_id="account.report_invoice_document">
+            <!-- Datos de compannia-->
+           <!--  <xpath expr="//t[@t-set='address']" position="before">
+                <div class="text-left">
+                    <p class="mt-0 mb-0 pt-0 pb-0"><strong t-field="o.company_id.name"></strong></p>
+                    <p class="mt-0 mb-0 pt-0 pb-0">RUC: <small t-field="o.company_id.vat"></small></p>
+                    <p class="mt-0 mb-0 pt-0 pb-0">Dirección: <small t-field="o.company_id.street"></small></p>
+                </div>
+            </xpath> -->
+
+            <!-- Datos cleinte -->
+            <!-- <xpath expr="//t[@t-set='address']" position="replace">
+                <div class="row">
+                    <div class="col-6">
+
+                    </div>
+                    <div class="col-6">
+                        <p class="mt-0 mb-0 pt-0 pb-0"><strong t-field="o.partner_id.name"></strong></p>
+                        <p class="mt-0 mb-0 pt-0 pb-0">RUC: <small t-field="o.partner_id.vat"></small></p>
+                        <p class="mt-0 mb-0 pt-0 pb-0">Dirección: <small t-field="o.partner_id.street" /> - 
+                            <small t-field="o.partner_id.l10n_pe_district.name" /> - 
+                            <small t-field="o.partner_id.city_id.name" />   
+                        </p>    
+                    </div>
+                </div>
+            </xpath> -->
+           
+            <!-- QR -->
+            <xpath expr="//p[@name='payment_communication']" position="after">
+
+                <div class="text-right">
+
+                    <t t-set="_ruc_emi" t-value="o.company_id.vat" />
+                    <t t-set="_tip_doc" t-value="o.l10n_latam_document_type_id.code"/>
+                    <t t-set="_serie" t-value="o.name[0:4]"/>
+                    <t t-set="_numcor" t-value="o.name[5:]"/>
+
+                    <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                        <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                            <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                            <t t-foreach="tax_totals['groups_by_subtotal'][subtotal_to_show]" t-as="amount_by_group">
+                                <t t-set="_sub_total" t-value="amount_by_group['tax_group_base_amount']"/>
+                                <t t-set="_igv" t-value="amount_by_group['tax_group_amount']"/>
+                            </t>
+                        </t>
+                    <t t-set="_total" t-value="tax_totals['amount_total']"/>
+                    <t t-set="_fecha" t-value="o.invoice_date" />
+                    <t t-set="_hash" t-value="o.DigestValue"/>
+                    <t t-set="qr_string" t-value="_ruc_emi+'|'+_tip_doc+'|'+_serie+'|'+_numcor+'|'+str(_igv)+'|'+str(_total)+'|'+str(_fecha)+'|-|-|'+_hash" />
+                    
+                    <img t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s'%('QR',qr_string, 160, 160)"/>          
+                    <p t-esc="_hash"></p>
+                </div>
+
+                <p>Representación impresa de la Factura generada desde el sistema facturador SUNAT (SFS v_1.5). Puede verificarla utilizando su clave SOL
+                    <a href="https://e-consulta.sunat.gob.pe/ol-ti-itconsvalicpe/ConsValiCpe.htm">Aqui</a>
+                </p>
+
+
+            </xpath>
+        </template>
     </data>
 </odoo>
