@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from ast import Try
 import base64
 import json
 from textwrap import indent
@@ -72,6 +73,19 @@ class AccountMove(models.Model):
         _FTP_PARAM = self.company_id.l10n_pe_edi_sfs_ftp_server, self.company_id.l10n_pe_edi_sfs_ftp_user, self.company_id.l10n_pe_edi_sfs_ftp_pass
         print(_FTP_PARAM)
 
+    #----------------------------------------------------------------
+    # GENERA XML AL POSTEAR FACTURA
+    #----------------------------------------------------------------------
+    def action_post(self):
+        for move in self:
+            if move.journal_id.type=='sale' and move.journal_id.l10n_latam_use_documents == True and move.move_type=='out_invoice':
+
+                try:
+                    self.genera_doc_electronico()    
+                except:
+                    print('Error al Generar XML')
+
+        return super().action_post()
 
     def genera_doc_electronico(self):
         _RUC = self.company_id.vat
@@ -203,7 +217,7 @@ class AccountMove(models.Model):
             "codMedioPago": "-",
             "codPaisCliente": "PE",
             "codUbigeoCliente": (str(self.partner_id.zip) or '-'),
-            "desDireccionCliente": (str(self.partner_id.street+'-'+self.partner_id.l10n_pe_district.name+'-'+self.partner_id.l10n_pe_district.city_id.name) or '-'),
+            "desDireccionCliente": '-', # str(self.partner_id.street+'-'+self.partner_id.l10n_pe_district.name+'-'+self.partner_id.l10n_pe_district.city_id.name) or '-'),
             "codPaisEntrega": "-",
             "codUbigeoEntrega": "-",
             "desDireccionEntrega": "-"
